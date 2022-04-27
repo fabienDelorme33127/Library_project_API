@@ -4,9 +4,13 @@ namespace App\Controller\Admin;
 
 use App\Entity\Genre;
 use App\Repository\GenreRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Serializer\SerializerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 
@@ -39,6 +43,22 @@ class GenreCrudController extends AbstractCrudController
             'json', 
             [
                 'groups' => ['listGenreSimple', 'listGenreFull']
+            ]
+        );
+       
+        return new JsonResponse($resultat, 200, [], true);
+    }
+
+    /**
+      * @Route("/api/genres/{id}", name="api_genres_show", requirements={"id"="\d+"}, methods={"GET"})
+      */
+      public function show(Genre $genre, SerializerInterface $Serializer){
+        
+        $resultat = $Serializer->serialize(
+            $genre, 
+            'json', 
+            [
+                'groups' => ['listGenreSimple']
             ]
         );
        
