@@ -22,7 +22,7 @@ class Nationalite
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"listGenreFull"})
+     * @Groups({"listGenreFull" , "listAuteurSimple", "listAuteurFull"})
      */
     private $libelle;
 

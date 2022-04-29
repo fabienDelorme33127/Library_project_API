@@ -13,8 +13,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Serializer\SerializerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 
 
@@ -72,12 +74,23 @@ class GenreCrudController extends AbstractCrudController
     /**
       * @Route("/api/genres", name="api_genres_create", methods={"POST"})
       */
-      public function create(Request $request, EntityManagerInterface $manager, SerializerInterface $Serializer){
+      public function create(Request $request, EntityManagerInterface $manager, SerializerInterface $serializer, ValidatorInterface $validator){
    
         $data = $request->getContent();
-      /*   $genre =  new Genre();
-        $Serializer->deserialize($data, Genre::class, 'json', ['object_to_populate' => $genre]); */
-        $genre = $Serializer->deserialize($data, Genre::class, 'json');
+        $genre = $serializer->deserialize($data, Genre::class, 'json');
+
+        $errors = $validator->validate($genre);
+
+        if (count($errors)) {
+            $errorsJson =  $serializer->serialize($errors, 'json');
+            return new JsonResponse(
+                $errorsJson, 
+                Response::HTTP_BAD_REQUEST, 
+                [],
+                true
+            );
+        }
+
 
         $manager->persist($genre);
         $manager->flush();
@@ -98,7 +111,7 @@ class GenreCrudController extends AbstractCrudController
       public function update(Genre $genre, Request $request, EntityManagerInterface $manager, SerializerInterface $Serializer){
    
         $data = $request->getContent();
-        $Serializer->deserialize($data, Genre::class, 'json', ['object_to_populate' => $genre]);
+        $Serializer->deserialize($data, Genre::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $genre]);
         $manager->persist($genre);
         $manager->flush();
        
@@ -111,7 +124,7 @@ class GenreCrudController extends AbstractCrudController
     }
 
     /**
-      * @Route("/api/genres/{id}", name="api_genres_update", methods={"DELETE"})
+      * @Route("/api/genres/{id}", name="api_genres_delete", methods={"DELETE"})
       */
       public function supprimer(Genre $genre, Request $request, EntityManagerInterface $manager, SerializerInterface $Serializer){
    
