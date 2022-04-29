@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Auteur;
 use App\Repository\AuteurRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\NationaliteRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -63,12 +64,15 @@ class AuteurCrudController extends AbstractCrudController
     /**
       * @Route("/api/auteurs", name="api_auteurs_create", methods={"POST"})
       */
-      public function create(Request $request, EntityManagerInterface $manager, SerializerInterface $serializer, ValidatorInterface $validator){
-   
-        $data = $request->getContent();
-        $auteur = $serializer->deserialize($data, Auteur::class, 'json');
+      public function create(Request $request, EntityManagerInterface $manager, SerializerInterface $serializer, ValidatorInterface $validator, NationaliteRepository $nationaliteRepository){
 
-        $errors = $validator->validate($auteur);
+        $data = $request->getContent();
+        $dataArray = json_decode($data, true);
+        $nationalite = $nationaliteRepository->find($dataArray["nationalite_id"]["id"]);
+        $auteur = $serializer->deserialize($data, Auteur::class, 'json');
+        $auteur->setNationalite($nationalite);
+
+        /* $errors = $validator->validate($auteur);
 
         if (count($errors)) {
             $errorsJson =  $serializer->serialize($errors, 'json');
@@ -78,7 +82,7 @@ class AuteurCrudController extends AbstractCrudController
                 [],
                 true
             );
-        }
+        } */
 
 
         $manager->persist($auteur);
@@ -97,10 +101,16 @@ class AuteurCrudController extends AbstractCrudController
     /**
       * @Route("/api/auteurs/{id}", name="api_auteurs_update", methods={"PUT"})
       */
-      public function update(Auteur $auteur, Request $request, EntityManagerInterface $manager, SerializerInterface $Serializer){
+      public function update(Auteur $auteur, Request $request, EntityManagerInterface $manager, SerializerInterface $serializer, NationaliteRepository $nationaliteRepository){
    
         $data = $request->getContent();
-        $Serializer->deserialize($data, Auteur::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $auteur]);
+        $dataArray = json_decode($data, true);
+
+        $nationalite = $nationaliteRepository->find($dataArray["nationalite_id"]["id"]);
+
+        $data = $serializer->deserialize($data, Auteur::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $auteur]);
+        $data->setNationalite($nationalite);
+
         $manager->persist($auteur);
         $manager->flush();
        
