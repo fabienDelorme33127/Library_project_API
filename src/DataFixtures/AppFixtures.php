@@ -35,7 +35,7 @@ class AppFixtures extends Fixture
 
     public function loadAdherent()
     {
-        $genre = ['male' => 'female'];
+        $genre = ['male', 'female'];
         $commune = [
             "78003", "78005", "78006", "78007", "78009", "78010", "78013", "78015", "78020", "78029",
             "78030", "78031", "78033", "78034", "78036", "78043", "78048", "78049", "78050", "78053", "78057",
@@ -68,7 +68,7 @@ class AppFixtures extends Fixture
     
     public function loadPret()
     {
-        for($i=0; $i<25; $i++){
+        for($i=0; $i < 25; $i++){
             $max = mt_rand(1,5);
             for($i=0; $i < $max; $i++){
                 $pret = new Pret();
@@ -76,14 +76,14 @@ class AppFixtures extends Fixture
 
                 $pret   ->setLivre($livre)
                         ->setAdherent($this->getReference("adherent".$i))
-                        ->setDatePret($this->faker>dateTimeBetween('-6 months'));
+                        ->setDatePret($this->faker->dateTimeBetween('-6 months'));
                 
                 $dateRetourPrevue = date("Y-m-d H:m:n", strtotime('15 days', $pret->getDatePret()->getTimestamp()));
-                $dateRetourPrevue = \DateTime::createFromFormat('Y-m-d', $dateRetourPrevue);
+                $dateRetourPrevue = \DateTime::createFromFormat('Y-m-d H:m:n', $dateRetourPrevue);
                 $pret->setDateRetourPrevue($dateRetourPrevue);
 
                 if(mt_rand(1, 3) == 1){
-                    $pret->setDateRetourReelle($this->fake->dateTimeInterval($pret->getDatePret(), "+30 days"));
+                    $pret->setDateRetourReelle($this->faker->dateTimeInInterval($pret->getDatePret(), "+30 days"));
                 }
 
                 $this->manager->persist($pret);
