@@ -2,17 +2,23 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\AdherentRepository;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=AdherentRepository::class)
  * @ApiResource()
+ * @UniqueEntity(
+ *     fields={"mail"},
+ *     message="Il existe déjà un mail {{ value }}, veuillez saisir un autre mail"
+ * )
  */
-class Adherent
+class Adherent implements UserInterface
 {
     /**
      * @ORM\Id
@@ -183,5 +189,22 @@ class Adherent
         }
 
         return $this;
+    }
+
+
+
+
+    public function getRoles(){
+        return ['ROLE_USER'];
+    }
+
+    public function getSalt(){
+        return null;
+    }
+
+    public function eraseCredentials(){}
+
+    public function getUsername(){
+        return $this->getMail();
     }
 }

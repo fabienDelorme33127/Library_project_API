@@ -8,15 +8,21 @@ use App\Entity\Livre;
 use App\Entity\Adherent;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
 
 class AppFixtures extends Fixture
 {
     private $manager;
     private $faker;
     private $repoLivre;
+    private $repoAdherent;
+    private $passwordHasher;
 
-    public function __construct()
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
     {
+        $this->passwordHasher = $passwordHasher;
         $this->faker = Factory::create("fr_FR");
     }
 
@@ -24,11 +30,9 @@ class AppFixtures extends Fixture
     {
         $this->manager = $manager;
         $this->repoLivre = $manager->getRepository(Livre::class);
+        $this->repoAdherent = $manager->getRepository(Adherent::class);
         $this->loadAdherent();
         $this->loadPret();
-
-        // $product = new Product();
-        // $manager->persist($product);
 
         $manager->flush();
     }
@@ -51,8 +55,8 @@ class AppFixtures extends Fixture
                         ->setCodeCommune($commune[mt_rand(0, sizeOf($commune) - 1)])
                         ->setMail(strtolower($adherent->getNom())."@gmail.com")
                         ->setTel($this->faker->phoneNumber())
-                        ->setPassword($adherent->getNom());
-            $this->addReference("adherent".$i, $adherent);
+                        ->setPassword($this->passwordHasher->hashPassword($adherent,($adherent->getNom())));
+            $this->addReference('adherent-'.$i, $adherent);
             $this->manager->persist($adherent);
         }
         $this->manager->flush();
@@ -68,14 +72,15 @@ class AppFixtures extends Fixture
     
     public function loadPret()
     {
-        for($i=0; $i < 25; $i++){
+        for($i=1; $i < 26; $i++){
             $max = mt_rand(1,5);
-            for($i=0; $i < $max; $i++){
+            for($j=0; $j < $max; $j++){
                 $pret = new Pret();
                 $livre = $this->repoLivre->find(mt_rand(1, 49));
+                $adherent = $this->repoAdherent->find($i);
 
                 $pret   ->setLivre($livre)
-                        ->setAdherent($this->getReference("adherent".$i))
+                        ->setAdherent($adherent)
                         ->setDatePret($this->faker->dateTimeBetween('-6 months'));
                 
                 $dateRetourPrevue = date("Y-m-d H:m:n", strtotime('15 days', $pret->getDatePret()->getTimestamp()));
