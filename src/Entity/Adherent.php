@@ -207,4 +207,5 @@ class Adherent implements UserInterface
     public function getUsername(){
         return $this->getMail();
     }
+    
 }

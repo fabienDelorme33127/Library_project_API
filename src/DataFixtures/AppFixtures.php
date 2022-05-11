@@ -65,7 +65,7 @@ class AppFixtures extends Fixture
         $adherent   ->setNom("Rolland")
                     ->setPrenom("Stéphane")
                     ->setMail("admin@gmail.com")
-                    ->setPassword("Rolland");
+                    ->setPassword($this->passwordHasher->hashPassword($adherent,($adherent->getNom())));
         $this->manager->persist($adherent);
         $this->manager->flush();
     }
