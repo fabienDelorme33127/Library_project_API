@@ -61,12 +61,22 @@ class AppFixtures extends Fixture
         }
         $this->manager->flush();
 
-        $adherent = new Adherent();
-        $adherent   ->setNom("Rolland")
-                    ->setPrenom("Stéphane")
-                    ->setMail("admin@gmail.com")
-                    ->setPassword($this->passwordHasher->hashPassword($adherent,($adherent->getNom())));
-        $this->manager->persist($adherent);
+        $adherentAdmin = new Adherent();
+        $adherentAdmin  ->setNom("Rolland")
+                        ->setPrenom("Stéphane")
+                        ->setMail("admin@gmail.com")
+                        ->setPassword($this->passwordHasher->hashPassword($adherentAdmin,($adherentAdmin->getNom())))
+                        ->setRoles([ADHERENT::ROLE_ADMIN]);
+        $this->manager->persist($adherentAdmin);
+
+        $adherentManager = new Adherent();
+        $adherentManager    ->setNom("Durant")
+                            ->setPrenom("Sophie")
+                            ->setMail("manager@gmail.com")
+                            ->setPassword($this->passwordHasher->hashPassword($adherentManager,($adherentManager->getNom())))
+                            ->setRoles([ADHERENT::ROLE_MANAGER]);
+        $this->manager->persist($adherentManager);
+
         $this->manager->flush();
     }
     

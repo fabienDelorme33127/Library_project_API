@@ -17,23 +17,24 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        login:
+        apiLogin:
             pattern:  ^/apiPlatform/login_check
             stateless: true
             json_login: # or form_login
                 username_path: mail
-                provider:                 in_database    #or your custom user provider 
-                check_path:               /apiPlatform/login_check  #same as the configured route
-                success_handler:          lexik_jwt_authentication.handler.authentication_success
-                failure_handler:          lexik_jwt_authentication.handler.authentication_failure
+                password_path: password
+                provider: in_database    #or your custom user provider 
+                check_path: /apiPlatform/login_check  #same as the configured route
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
                 require_previous_session: false
-        apiPlatform:
+        api:
             pattern:   ^/apiPlatform              # protected path
             stateless: true
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
-
+                    
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -44,8 +45,12 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-         - { path: ^/apiPlatform/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/apiPlatform/login_check, roles: PUBLIC_ACCESS }
          - { path: ^/apiPlatform, roles: IS_AUTHENTICATED_FULLY }
+
+    role_hierarchy:
+        ROLE_MANAGER: ROLE_ADHERENT
+        ROLE_ADMIN: ROLE_MANAGER
          
 
 when@test:
