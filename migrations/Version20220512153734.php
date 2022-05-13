@@ -20,8 +20,8 @@ final class Version20220512153734 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE adherent ADD roles LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:simple_array)\'');
-        $this->addSql('ALTER TABLE livre CHANGE prix prix DOUBLE PRECISION DEFAULT NULL, CHANGE annee annee INT DEFAULT NULL, CHANGE langue langue VARCHAR(255) DEFAULT NULL');
+/*         $this->addSql('ALTER TABLE adherent ADD roles LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:simple_array)\'');
+ */        $this->addSql('ALTER TABLE livre CHANGE prix prix DOUBLE PRECISION DEFAULT NULL, CHANGE annee annee INT DEFAULT NULL, CHANGE langue langue VARCHAR(255) DEFAULT NULL');
     }
 
     public function down(Schema $schema): void
