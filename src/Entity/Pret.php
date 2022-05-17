@@ -5,10 +5,48 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PretRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=PretRepository::class)
- * @ApiResource()
+ * @ApiResource(
+*      collectionOperations = {
+*           "get" = {
+*               "method" : "GET",
+*               "path" : "/prets",
+*               "normalization_context" = {
+*                   "groups" : { "get_role_adherent" }
+*               },
+*           },
+*           "post" = {
+*               "method" : "POST",
+*           }
+*       },
+ *      itemOperations = {
+ *           "get" = {
+ *               "method" : "GET",
+ *               "path" : "/prets/{id}",
+ *               "normalization_context" = {
+ *                   "groups" : { "get_role_adherent" }
+ *               },
+ *           },
+ *           "delete" = {
+ *               "method" : "DELETE",
+ *               "path" : "/prets/{id}",
+ *               "security" : "is_granted('ROLE_MANAGER')",
+ *               "security_message" : "Vous n'avez pas l'autorisation d'accéder à cette ressource"
+ *           },
+ *            "put" = {
+ *               "method" : "PUT",
+ *               "path" : "/prets/{id}",
+ *               "security" : "is_granted('ROLE_MANAGER')",
+ *               "security_message" : "Vous n'avez pas l'autorisation d'accéder à cette ressource",
+ *               "denormalization_context" = {
+ *                   "groups" : { "put_manager" }
+ *               }
+ *           }
+ *      }
+ * )
  */
 class Pret
 {
@@ -21,30 +59,46 @@ class Pret
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({ "put_admin", "get_role_adherent" })
      */
     private $datePret;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({ "put_admin", "get_role_adherent" })
      */
     private $dateRetourPrevue;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({ "put_manager", "put_admin" })
      */
     private $dateRetourReelle;
 
     /**
      * @ORM\ManyToOne(targetEntity=Livre::class, inversedBy="prets")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({ "put_admin", "get_role_adherent" })
      */
     private $livre;
 
     /**
      * @ORM\ManyToOne(targetEntity=Adherent::class, inversedBy="prets")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({ "put_admin" })
      */
     private $adherent;
+
+    public function __construct()
+    {
+        $this->datePret = new \DateTime();
+
+        $dateRetourPrevue = date("Y-m-d H:m:n", strtotime('15 days', $this->getDatePret()->getTimestamp()));
+        $dateRetourPrevue = \DateTime::createFromFormat('Y-m-d H:m:n', $dateRetourPrevue);
+        $this->dateRetourPrevue = $dateRetourPrevue;
+
+        $this->dateRetourReelle =  null;
+    }
 
     public function getId(): ?int
     {

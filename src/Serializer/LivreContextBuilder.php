@@ -25,6 +25,12 @@ final class LivreContextBuilder implements SerializerContextBuilderInterface
         if ($resourceClass === Livre::class && isset($context['groups']) && $this->authorizationChecker->isGranted('ROLE_MANAGER') && $normalization === true) {
             $context['groups'][] = 'get_role_manager';
         }
+        
+        if ($resourceClass === Livre::class && isset($context['groups']) && $this->authorizationChecker->isGranted('ROLE_ADMIN') && $normalization === false) {
+            if($request->getmethod() === 'PUT'){
+                $context['groups'][] = 'put_admin';
+            }
+        }
     
         return $context;
     }
