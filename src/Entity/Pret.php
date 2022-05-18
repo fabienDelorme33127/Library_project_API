@@ -7,6 +7,8 @@ use App\Repository\PretRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+use App\Controllers\ApiPlatformController;
+
 /**
  * @ORM\Entity(repositoryClass=PretRepository::class)
  * @ApiResource(
@@ -17,6 +19,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 *               "normalization_context" = {
 *                   "groups" : { "get_role_adherent" }
 *               },
+*               "controller" : "ApiPlatformController::class"
 *           },
 *           "post" = {
 *               "method" : "POST",

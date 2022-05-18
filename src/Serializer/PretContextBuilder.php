@@ -30,13 +30,15 @@ final class PretContextBuilder implements SerializerContextBuilderInterface
             }
         }
 
-/*         if ($resourceClass === Pret::class && isset($context['groups']) && $this->authorizationChecker->isGranted('ROLE_ADHERENT') && $normalization === true) {
+        if ($resourceClass === Pret::class && isset($context['groups']) && $this->authorizationChecker->isGranted('ROLE_ADHERENT') && $normalization === true) {
             if($request->getmethod() === 'GET'){
+                dump($this->decorated);die;
                 
-                $context["request_uri"] .= "/" . $this->tokenStorage->getToken()->getUser()->getId();
+    /*             $context["request_uri"] .= "/" . $this->tokenStorage->getToken()->getUser()->getId();
                 $context["uri"] .= "/" . $this->tokenStorage->getToken()->getUser()->getId();
+                dump($context);  */            
             }
-        } */
+        }
     
         return $context;
     }
