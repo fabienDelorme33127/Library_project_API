@@ -4,10 +4,11 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PretRepository;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
-
 use App\Controllers\ApiPlatformController;
+use ApiPlatform\Core\Annotation\ApiResource;
+
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * @ORM\Entity(repositoryClass=PretRepository::class)
@@ -19,7 +20,6 @@ use App\Controllers\ApiPlatformController;
 *               "normalization_context" = {
 *                   "groups" : { "get_role_adherent" }
 *               },
-*               "controller" : "ApiPlatformController::class"
 *           },
 *           "post" = {
 *               "method" : "POST",
@@ -32,14 +32,9 @@ use App\Controllers\ApiPlatformController;
  *               "normalization_context" = {
  *                   "groups" : { "get_role_adherent" }
  *               },
+ *               "security" : "(is_granted('ROLE_ADHERENT') and object.getAdherent() == user) or is_granted('ROLE_MANAGER')"
  *           },
- *           "delete" = {
- *               "method" : "DELETE",
- *               "path" : "/prets/{id}",
- *               "security" : "is_granted('ROLE_MANAGER')",
- *               "security_message" : "Vous n'avez pas l'autorisation d'accéder à cette ressource"
- *           },
- *            "put" = {
+ *           "put" = {
  *               "method" : "PUT",
  *               "path" : "/prets/{id}",
  *               "security" : "is_granted('ROLE_MANAGER')",
@@ -47,7 +42,13 @@ use App\Controllers\ApiPlatformController;
  *               "denormalization_context" = {
  *                   "groups" : { "put_manager" }
  *               }
- *           }
+ *           },
+ *           "delete" = {
+ *               "method" : "DELETE",
+ *               "path" : "/prets/{id}",
+ *               "security" : "is_granted('ROLE_MANAGER')",
+ *               "security_message" : "Vous n'avez pas l'autorisation d'accéder à cette ressource"
+ *           }          
  *      }
  * )
  */
@@ -62,13 +63,13 @@ class Pret
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({ "put_admin", "get_role_adherent" })
+     * @Groups({ "get_role_adherent" })
      */
     private $datePret;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({ "put_admin", "get_role_adherent" })
+     * @Groups({ "get_role_adherent" })
      */
     private $dateRetourPrevue;
 
@@ -81,14 +82,13 @@ class Pret
     /**
      * @ORM\ManyToOne(targetEntity=Livre::class, inversedBy="prets")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({ "put_admin", "get_role_adherent" })
+     * @Groups({ "get_role_adherent" })
      */
     private $livre;
 
     /**
      * @ORM\ManyToOne(targetEntity=Adherent::class, inversedBy="prets")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({ "put_admin" })
      */
     private $adherent;
 
