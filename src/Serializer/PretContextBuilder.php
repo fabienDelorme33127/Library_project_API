@@ -30,12 +30,6 @@ final class PretContextBuilder implements SerializerContextBuilderInterface
             }
         }
 
-        if ($resourceClass === Pret::class && $this->authorizationChecker->isGranted('ROLE_ADHERENT')) {
-            if($request->getmethod() === 'POST'){
-                
-            }
-        }
-
         return $context;
     }
 }

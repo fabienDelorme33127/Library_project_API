@@ -30,7 +30,7 @@ final class PretGetCollectionDataProvider implements ContextAwareCollectionDataP
                 } catch (\Exception $e) {
                 throw new \RuntimeException(sprintf("Impossible d'accéder à la ressource externe: %s", $e->getMessage()));
                 }
-                       
+                
                 return $collection; 
         }
 }
