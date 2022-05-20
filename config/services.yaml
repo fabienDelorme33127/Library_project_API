@@ -33,7 +33,3 @@ services:
         arguments: [ '@App\Serializer\PretContextBuilder.inner' ]
         autoconfigure: false
 
-    'App\DataProvider\PretGetCollectionDataProvider':
-        tags: [ { name: 'api_platform.collection_data_provider', priority: 2 } ]
-        # Autoconfiguration must be disabled to set a custom priority
-        autoconfigure: false

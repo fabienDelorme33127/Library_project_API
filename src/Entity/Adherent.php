@@ -6,13 +6,27 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\AdherentRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=AdherentRepository::class)
- * @ApiResource()
+ * @ApiResource(
+ * collectionOperations = {
+ *           "get" = {
+ *               "method" : "GET",
+ *               "path" : "/adherents/{id}/prets",
+ *               "security" : "(is_granted('ROLE_ADHERENT') and id == user.getId()) or is_granted('ROLE_MANAGER')",
+ *               "security_message" : "Vous n'avez pas l'autorisation d'accéder à cette ressource",
+ *               "normalization_context" = {
+ *                   "groups" : { "test" }
+ *               },
+ *           }
+ *       }
+ * )
  * @UniqueEntity(
  *     fields={"mail"},
  *     message="Il existe déjà un mail {{ value }}, veuillez saisir un autre mail"
@@ -68,6 +82,7 @@ class Adherent implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity=Pret::class, mappedBy="adherent")
+     * @ApiSubresource
      */
     private $prets;
 
@@ -79,6 +94,7 @@ class Adherent implements UserInterface
     public function __construct()
     {
         $this->prets = new ArrayCollection();
+        $leRole = [];
         $leRole[] = self::DEFAULT_ROLE;
         $this->roles = $leRole;
     }
@@ -207,7 +223,7 @@ class Adherent implements UserInterface
 
     public function getRoles()
     {
-        return $this->roles; //return array($this->roles)?
+        return $this->roles;
     }
 
     public function setRoles(array $roles): self
@@ -227,6 +243,5 @@ class Adherent implements UserInterface
     }
 
     public function getUserIdentifier(){}
-
     
 }
