@@ -1,12 +1,13 @@
 <?php
 namespace App\Serializer;
 
-use App\Entity\Pret;
+use App\Entity\Adherent;
 use Symfony\Component\HttpFoundation\Request;
 use ApiPlatform\Core\Serializer\SerializerContextBuilderInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-final class PretContextBuilder implements SerializerContextBuilderInterface
+final class AdherentContextBuilder implements SerializerContextBuilderInterface
 {
     private $decorated;
     private $authorizationChecker;
@@ -22,9 +23,18 @@ final class PretContextBuilder implements SerializerContextBuilderInterface
         $context = $this->decorated->createFromRequest($request, $normalization, $extractedAttributes);
         $resourceClass = $context['resource_class'] ?? null;
         
-        if ($resourceClass === Pret::class && isset($context['groups']) && $this->authorizationChecker->isGranted('ROLE_ADMIN') && $normalization === false) {
+        if ($resourceClass === Adherent::class && isset($context['groups']) && $this->authorizationChecker->isGranted('ROLE_ADMIN') && $normalization === true) {
+            if($request->getmethod() === 'GET'){
+                $context['groups'][] = 'get_itemColl_admin';
+            }
+        }
+
+        if ($resourceClass === Adherent::class && isset($context['groups']) && $this->authorizationChecker->isGranted('ROLE_ADMIN') && $normalization === false) {
             if($request->getmethod() === 'PUT'){
                 $context['groups'][] = 'put_admin';
+            }
+            if($request->getmethod() === 'POST'){
+                $context['groups'][] = 'post_admin';
             }
         }
 

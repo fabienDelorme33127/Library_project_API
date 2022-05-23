@@ -33,3 +33,8 @@ services:
         arguments: [ '@App\Serializer\PretContextBuilder.inner' ]
         autoconfigure: false
 
+    'App\Serializer\AdherentContextBuilder':
+        decorates: 'api_platform.serializer.context_builder'
+        arguments: [ '@App\Serializer\AdherentContextBuilder.inner' ]
+        autoconfigure: false
+

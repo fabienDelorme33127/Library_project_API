@@ -15,17 +15,57 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass=AdherentRepository::class)
  * @ApiResource(
- * collectionOperations = {
+ *      collectionOperations = {
  *           "get" = {
  *               "method" : "GET",
+ *               "path" : "/adherents",
+ *               "security" : "is_granted('ROLE_MANAGER')",
+ *               "security_message" : "Vous n'avez pas l'autorisation d'accéder à cette ressource",
+ *           },
+ *           "post" = {
+ *               "method" : "POST",
+ *               "security" : "is_granted('ROLE_MANAGER')",
+ *               "security_message" : "Vous n'avez pas l'autorisation d'accéder à cette ressource",
+ *               "denormalization_context" = {
+ *                   "groups" : { "post_manager" }
+ *               }
+ *           }
+ *      },
+ *      itemOperations = {
+ *          "get" = {
+ *               "method" : "GET",
  *               "path" : "/adherents/{id}/prets",
- *               "security" : "(is_granted('ROLE_ADHERENT') and id == user.getId()) or is_granted('ROLE_MANAGER')",
+ *               "security" : "(is_granted('ROLE_ADHERENT') and user.getId() == id) or is_granted('ROLE_MANAGER')",
  *               "security_message" : "Vous n'avez pas l'autorisation d'accéder à cette ressource",
  *               "normalization_context" = {
- *                   "groups" : { "test" }
+ *                   "groups" : { "get_prets_user_co" }
  *               },
+ *          },
+ *          "get" = {
+ *               "method" : "GET",
+ *               "path" : "/adherents/{id}",
+ *               "security" : "(is_granted('ROLE_ADHERENT') and user.getId() == id) or is_granted('ROLE_MANAGER')",
+ *               "security_message" : "Vous n'avez pas l'autorisation d'accéder à cette ressource",
+ *               "normalization_context" = {
+ *                   "groups" : { "get_itemColl_adherent" }
+ *               },
+ *          },
+ *          "put" = {
+ *               "method" : "PUT",
+ *               "path" : "/adherents/{id}",
+ *               "security" : "(is_granted('ROLE_ADHERENT') and user.getId() == id) or is_granted('ROLE_MANAGER')",
+ *               "security_message" : "Vous n'avez pas l'autorisation d'accéder à cette ressource",
+ *               "denormalization_context" = {
+ *                   "groups" : { "put_itemColl_adherent" }
+ *               }
+ *          },
+ *           "delete" = {
+ *               "method" : "DELETE",
+ *               "path" : "/adherents/{id}",
+ *               "security" : "is_granted('ROLE_ADMIN')",
+ *               "security_message" : "Vous n'avez pas l'autorisation d'accéder à cette ressource"
  *           }
- *       }
+ *      }
  * )
  * @UniqueEntity(
  *     fields={"mail"},
@@ -47,47 +87,56 @@ class Adherent implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({ "post_manager", "get_itemColl_adherent", "put_itemColl_adherent" })
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({ "post_manager", "get_itemColl_adherent", "put_itemColl_adherent" })
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({ "post_manager", "get_itemColl_adherent", "put_itemColl_adherent" })
      */
     private $adresse;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({ "post_manager", "get_itemColl_adherent", "put_itemColl_adherent" })
      */
     private $codeCommune;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({ "post_manager", "get_itemColl_adherent", "put_admin" })
      */
     private $mail;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({ "post_manager", "get_itemColl_adherent", "put_itemColl_adherent" })
      */
     private $tel;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({ "post_manager", "put_itemColl_adherent", "put_admin" })
      */
     private $password;
 
     /**
      * @ORM\OneToMany(targetEntity=Pret::class, mappedBy="adherent")
      * @ApiSubresource
+     * @Groups({ "get_prets_user_co", "get_itemColl_adherent" })
      */
     private $prets;
 
     /**
      * @ORM\Column(type="array")
+     * @Groups({ "get_itemColl_admin", "post_admin" })
      */
     private $roles = [];
 

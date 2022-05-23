@@ -95,7 +95,7 @@ class Livre
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({ "put_manager", "put_admin" })
+     * @Groups({ "put_admin" })
      */
     private $prix;
 
