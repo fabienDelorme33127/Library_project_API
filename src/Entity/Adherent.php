@@ -28,11 +28,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *               "security_message" : "Vous n'avez pas l'autorisation d'accéder à cette ressource",
  *               "denormalization_context" = {
  *                   "groups" : { "post_manager" }
- *               }
+ *               },
  *           }
  *      },
  *      itemOperations = {
- *          "get" = {
+ *          "get" = {  
  *               "method" : "GET",
  *               "path" : "/adherents/{id}/prets",
  *               "security" : "(is_granted('ROLE_ADHERENT') and user.getId() == id) or is_granted('ROLE_MANAGER')",
@@ -123,7 +123,7 @@ class Adherent implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({ "post_manager", "put_itemColl_adherent", "put_admin" })
+     * @Groups({ "post_manager", "modif_password_adherent", "put_admin", "get_itemColl_manager" })
      */
     private $password;
 
@@ -136,7 +136,7 @@ class Adherent implements UserInterface
 
     /**
      * @ORM\Column(type="array")
-     * @Groups({ "get_itemColl_admin", "post_admin" })
+     * @Groups({ "get_itemColl_manager", "put_admin" })
      */
     private $roles = [];
 
