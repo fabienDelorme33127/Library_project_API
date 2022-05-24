@@ -138,6 +138,11 @@ class Livre
      */
     private $prets;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $dispo;
+
     public function __construct()
     {
         $this->prets = new ArrayCollection();
@@ -275,6 +280,18 @@ class Livre
                 $pret->setLivre(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isDispo(): ?bool
+    {
+        return $this->dispo;
+    }
+
+    public function setDispo(?bool $dispo): self
+    {
+        $this->dispo = $dispo;
 
         return $this;
     }

@@ -11,7 +11,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=AuteurRepository::class)
- * @ApiResource()
+ * @ApiResource(
+ *      collectionOperations = {
+ *           "get" = {
+ *               "method" : "GET",
+ *               "path" : "/auteurs",
+ *               "denormalization_context" = {
+ *                   "groups" : { "get" }
+ *               }
+ *           }
+ *      }
+ * )
  */
 class Auteur
 {
@@ -24,17 +34,20 @@ class Auteur
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({ "get" })
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({ "get" })
      */
     private $prenom;
 
     /**
      * @ORM\ManyToOne(targetEntity=Nationalite::class, inversedBy="auteurs")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({ "get" })
      */
     private $nationalite;
 
@@ -122,5 +135,13 @@ class Auteur
     public function __toString()
     {
         return (string) $this->nom . " " . $this->prenom;
+    }
+
+    /**
+     * @Groups({ "get" })
+     */
+    public function getNbLivres() : int
+    {
+        return $this->livres->count();
     }
 }

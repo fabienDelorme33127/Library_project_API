@@ -7,6 +7,7 @@ use App\Repository\PretRepository;
 use App\Controllers\ApiPlatformController;
 use ApiPlatform\Core\Annotation\ApiResource;
 
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -23,6 +24,9 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 *           },
 *           "post" = {
 *               "method" : "POST",
+*               "denormalization_context" = {
+*                   "groups" : { "post_prets" }
+*               }
 *           }
 *       },
  *      itemOperations = {
@@ -51,6 +55,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  *           }          
  *      }
  * )
+ * @ORM\HasLifecycleCallbacks()
  */
 class Pret
 {
@@ -82,7 +87,7 @@ class Pret
     /**
      * @ORM\ManyToOne(targetEntity=Livre::class, inversedBy="prets")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({ "get_role_adherent" })
+     * @Groups({ "get_role_adherent", "post_prets" })
      */
     private $livre;
 
@@ -166,5 +171,13 @@ class Pret
         $this->adherent = $adherent;
 
         return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function rendIndispoLivre()
+    {
+        $this->getLivre()->setDispo(false);
     }
 }

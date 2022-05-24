@@ -20,8 +20,8 @@ class PretSubscriber implements EventSubscriberInterface
                 $this->token = $token;
         }
 
-        public static function getSubscribedEvents() // implements EventSubscriberInterface => mettre la function déclaré dedans ici
-        {
+        public static function getSubscribedEvents() // implements EventSubscriberInterface => mettre la function déclarée dans EventSubscriberInterface ici
+        {                                            //et l'utiliser si besoin
                 return [
                         KernelEvents::VIEW => ['getAuthenticatedUser', EventPriorities::PRE_WRITE]
                 ];
