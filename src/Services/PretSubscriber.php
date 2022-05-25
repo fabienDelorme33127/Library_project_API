@@ -32,9 +32,19 @@ class PretSubscriber implements EventSubscriberInterface
                 $entity = $event->getControllerResult(); // récupère l'entité qui a déclenché l'événement
                 $method = $event->getRequest()->getMethod(); // récupère la méthode invoquée dans l'événement
                 $adherent = $this->token->getToken()->getUser(); // récupère l'utilisateur actuellement connecté
-                if ($entity instanceof Pret && $method === Request::METHOD_POST) { // si Entité Pret et méthode POST
-                        $entity->setAdherent($adherent); // alors on lie notre adherent co à notre Pret
+                if ($entity instanceof Pret) { // si Entité Pret et méthode POST
+                        if($method === Request::METHOD_POST){
+                                $entity->setAdherent($adherent); // alors on lie notre adherent co à notre Pret
+                        }elseif($method === Request::METHOD_PUT){
+                                if($entity->getDateRetourReelle() == null){
+                                        $entity->getLivre()->setDispo(false); //si le livre n'est pas rendu, livre pas dispo.
+                                }
+                                else{
+                                        $entity->getLivre()->setDispo(true); //sinon livre dispo.
+                                }
+                        }elseif($method === Request::METHOD_DELETE){
+                                $entity->getLivre()->setDispo(true); //delete => livre dispo à nouveau
+                        }
                 }
-                return;
         }
 }

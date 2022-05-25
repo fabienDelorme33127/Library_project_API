@@ -20,7 +20,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 *               "path" : "/prets",
 *               "normalization_context" = {
 *                   "groups" : { "get_role_adherent" }
-*               },
+*               }
 *           },
 *           "post" = {
 *               "method" : "POST",
