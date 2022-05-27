@@ -75,4 +75,15 @@ class AdherentRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function nbPretsParAdherent()
+    {
+        $query = $this->createQueryBuilder('a')
+                ->select('a.id, a.nom, a.prenom, count(p.id) as nbPrets')
+                ->join('a.prets', 'p')
+                ->groupBy('a')
+                ->orderBy('nbPrets', 'DESC');
+                
+        return $query->getQuery()->getResult();
+    }
 }

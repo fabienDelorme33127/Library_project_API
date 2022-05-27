@@ -23,7 +23,7 @@ class PretSubscriber implements EventSubscriberInterface
         public static function getSubscribedEvents() // implements EventSubscriberInterface => mettre la function déclarée dans EventSubscriberInterface ici
         {                                            //et l'utiliser si besoin
                 return [
-                        KernelEvents::VIEW => ['getAuthenticatedUser', EventPriorities::PRE_WRITE]
+                        KernelEvents::VIEW => ['getAuthenticatedUser', EventPriorities::PRE_WRITE] //pre_write like prePersist
                 ];
         }
 
@@ -32,7 +32,7 @@ class PretSubscriber implements EventSubscriberInterface
                 $entity = $event->getControllerResult(); // récupère l'entité qui a déclenché l'événement
                 $method = $event->getRequest()->getMethod(); // récupère la méthode invoquée dans l'événement
                 $adherent = $this->token->getToken()->getUser(); // récupère l'utilisateur actuellement connecté
-                if ($entity instanceof Pret) { // si Entité Pret et méthode POST
+                if ($entity instanceof Pret) { // si Entité Pret et méthode POST (post = création d'un pret)
                         if($method === Request::METHOD_POST){
                                 $entity->setAdherent($adherent); // alors on lie notre adherent co à notre Pret
                         }elseif($method === Request::METHOD_PUT){

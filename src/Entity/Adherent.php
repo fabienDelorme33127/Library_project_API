@@ -22,6 +22,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *               "security" : "is_granted('ROLE_MANAGER')",
  *               "security_message" : "Vous n'avez pas l'autorisation d'accéder à cette ressource",
  *           },
+ *           "get" = {
+ *               "method" : "GET",
+ *               "route_name" : "adherents_nbPrets",
+ *               "controller" : "StatsController::class"
+ *           },
  *           "post" = {
  *               "method" : "POST",
  *               "security" : "is_granted('ROLE_MANAGER')",
@@ -39,7 +44,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *               "security_message" : "Vous n'avez pas l'autorisation d'accéder à cette ressource",
  *               "normalization_context" = {
  *                   "groups" : { "get_prets_user_co" }
- *               },
+ *               }
  *          },
  *          "get" = {
  *               "method" : "GET",
@@ -48,6 +53,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *               "security_message" : "Vous n'avez pas l'autorisation d'accéder à cette ressource",
  *               "normalization_context" = {
  *                   "groups" : { "get_itemColl_adherent" }
+ *               }
+ *          },
+ *          "get" = {
+ *               "method" : "GET",
+ *               "getNbPrets" : {
+ *                  "route_name" : "adherent_prets_count"   
  *               },
  *          },
  *          "put" = {
