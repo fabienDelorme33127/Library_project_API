@@ -22,7 +22,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *               "security" : "is_granted('ROLE_MANAGER')",
  *               "security_message" : "Vous n'avez pas l'autorisation d'accéder à cette ressource",
  *           },
- *           "get" = {
+ *           "adherents_nbPrets" = {
  *               "method" : "GET",
  *               "route_name" : "adherents_nbPrets",
  *               "controller" : "StatsController::class"

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\LivreRepository;
 use App\Repository\AdherentRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,5 +21,18 @@ class StatsController extends AbstractController
     {
         $nbPretsParAdherent = $repo->nbPretsParAdherent();
         return $this->json($nbPretsParAdherent);
+    }
+
+    /**
+     * @Route(
+     *      path = "apiPlatform/livres/meilleursLivres", 
+     *      name = "meilleursLivres",
+     *      methods = "GET"
+     * )
+     */
+    public function meilleursLivres(LivreRepository $repo)
+    {
+        $meilleursLivres = $repo->trouveMeilleursLivres();
+        return $this->json($meilleursLivres);
     }
 }

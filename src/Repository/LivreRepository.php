@@ -75,4 +75,15 @@ class LivreRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function trouveMeilleursLivres()
+    {
+        $query = $this->createQueryBuilder('l')
+                ->select('l as livre, count(p.id) as nbPrets')
+                ->join('l.prets', 'p')
+                ->groupBy('l')
+                ->orderBy('nbPrets', 'DESC')
+                ->setMaxResults(5);
+
+        return $query->getQuery()->getResult();
+    }
 }
